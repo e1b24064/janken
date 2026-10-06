@@ -8,7 +8,15 @@
 
 <body>
   <h1>Janken GAME!</h1>
-  <p th:if="${userName}">Hi [[${userName}]]</p>
+  <p>[[${greeting}]]</p>
+  <div>
+    <a href="/janken?hand=ぐー">ぐー</a>
+    <a href="/janken?hand=ちょき">ちょき</a>
+    <a href="/janken?hand=ぱー">ぱー</a>
+  </div>
+  <div>あなたの手：[[${userHand}]]</div>
+  <div>相手の手：[[${cpuHand}]]</div>
+  <div>結果：[[${result}]]</div>
 </body>
 
 </html>
