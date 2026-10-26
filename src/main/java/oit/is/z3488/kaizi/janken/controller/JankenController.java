@@ -14,6 +14,9 @@ import oit.is.z3488.kaizi.janken.model.Janken;
 import oit.is.z3488.kaizi.janken.model.User;
 import oit.is.z3488.kaizi.janken.model.UserMapper;
 
+import oit.is.z3488.kaizi.janken.model.Match;
+import oit.is.z3488.kaizi.janken.model.MatchMapper;
+
 @Controller
 public class JankenController {
 
@@ -22,6 +25,9 @@ public class JankenController {
 
   @Autowired
   UserMapper userMapper;
+
+  @Autowired
+  MatchMapper matchMapper;
 
   @GetMapping("/janken")
   public String jankenGet(@RequestParam(required = false) String hand, ModelMap model, Principal prin) {
@@ -32,6 +38,9 @@ public class JankenController {
 
     ArrayList<User> users = userMapper.selectAllUsers();
     model.addAttribute("users", users);
+
+    ArrayList<Match> matches = matchMapper.selectAllMatches();
+    model.addAttribute("matches", matches);
 
     if (hand != null) {
       Janken janken = new Janken();
