@@ -9,6 +9,17 @@
 <body>
   <h1>試合</h1>
   <p>[[${loginUser}]] vs [[${opponent.name}]]</p>
+
+  <div>
+    <a href="/fight?hand=Gu">Gu</a>
+    <a href="/fight?hand=Choki">Choki</a>
+    <a href="/fight?hand=Pa">Pa</a>
+  </div>
+
+  <div>[[${loginUser}]]の手:[[${userHand}]]</div>
+  <div>[[${opponent.name}]]の手:[[${cpuHand}]]</div>
+  <div>結果:[[${result}]]</div>
+
   <a href="/janken">もどる</a>
 </body>
 

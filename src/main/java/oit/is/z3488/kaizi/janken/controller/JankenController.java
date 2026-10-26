@@ -59,4 +59,28 @@ public class JankenController {
     model.addAttribute("opponent", opponent);
     return "match.html";
   }
+
+  @GetMapping("/fight")
+  public String fight(@RequestParam String hand, ModelMap model, Principal prin) {
+    String loginUser = prin.getName();
+    User me = userMapper.selectByName(loginUser);
+    User cpu = userMapper.selectByName("CPU");
+
+    Janken janken = new Janken();
+    String cpuHand = janken.getCpuHand();
+
+    Match match = new Match();
+    match.setUser1(me.getId());
+    match.setUser2(cpu.getId());
+    match.setUser1Hand(hand);
+    match.setUser2Hand(cpuHand);
+    matchMapper.insertMatch(match);
+
+    model.addAttribute("loginUser", loginUser);
+    model.addAttribute("opponent", cpu);
+    model.addAttribute("userHand", hand);
+    model.addAttribute("cpuHand", cpuHand);
+    model.addAttribute("result", janken.judge(hand));
+    return "match.html";
+  }
 }

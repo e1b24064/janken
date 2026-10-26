@@ -21,10 +21,10 @@ public class JankenAuthConfiguration {
             .logoutUrl("/logout")
             .logoutSuccessUrl("/"))
         .authorizeHttpRequests(authz -> authz
-            .requestMatchers("/janken/**").authenticated()
+            .requestMatchers("/janken/**", "/match/**", "/fight/**").authenticated()
             .anyRequest().permitAll())
         .csrf(csrf -> csrf
-            .ignoringRequestMatchers("/h2-console/*"))
+            .ignoringRequestMatchers("/h2-console/**"))
         .headers(headers -> headers
             .frameOptions(frameOptions -> frameOptions
                 .sameOrigin()));
