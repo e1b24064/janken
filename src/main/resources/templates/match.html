@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 
 <head>
   <meta charset="utf-8">
@@ -10,10 +10,16 @@
   <h1>試合</h1>
   <p>[[${loginUser}]] vs [[${opponent.name}]]</p>
 
-  <div>
+  <div th:if="${opponent.name == 'CPU'}">
     <a href="/fight?hand=Gu">Gu</a>
     <a href="/fight?hand=Choki">Choki</a>
     <a href="/fight?hand=Pa">Pa</a>
+  </div>
+
+  <div th:unless="${opponent.name == 'CPU'}">
+    <a th:href="@{/wait(id=${opponent.id}, hand='Gu')}">Gu</a>
+    <a th:href="@{/wait(id=${opponent.id}, hand='Choki')}">Choki</a>
+    <a th:href="@{/wait(id=${opponent.id}, hand='Pa')}">Pa</a>
   </div>
 
   <div>[[${loginUser}]]の手:[[${userHand}]]</div>
