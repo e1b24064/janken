@@ -19,6 +19,12 @@
   </ul>
 
   <h2>試合結果</h2>
+  <h2>アクティブな試合</h2>
+  <ul>
+    <li th:each="m : ${activeMatches}">
+      ユーザID [[${m.user1}]] vs ユーザID [[${m.user2}]]
+    </li>
+  </ul>
   <ul>
     <li th:each="match : ${matches}">
       user1:[[${match.user1}]] vs user2:[[${match.user2}]]
