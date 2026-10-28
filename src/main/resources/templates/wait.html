@@ -4,11 +4,20 @@
 <head>
   <meta charset="utf-8">
   <title>待機</title>
+  <script>
+    window.onload = function () {
+      var sse = new EventSource('/result');
+      sse.onmessage = function (event) {
+        document.getElementById("p1").innerHTML = event.data;
+        sse.close();
+      }
+    }
+  </script>
 </head>
 
 <body>
   <p>Hi [[${loginUser}]]</p>
-  <p>相手の手を待ってます</p>
+  <p id="p1">相手の手を待ってます</p>
 </body>
 
 </html>
