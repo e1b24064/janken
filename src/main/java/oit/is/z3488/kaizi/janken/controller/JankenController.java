@@ -1,5 +1,6 @@
 package oit.is.z3488.kaizi.janken.controller;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 
@@ -9,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import oit.is.z3488.kaizi.janken.model.Entry;
 import oit.is.z3488.kaizi.janken.model.Janken;
@@ -19,6 +21,7 @@ import oit.is.z3488.kaizi.janken.model.Match;
 import oit.is.z3488.kaizi.janken.model.MatchMapper;
 import oit.is.z3488.kaizi.janken.model.MatchInfo;
 import oit.is.z3488.kaizi.janken.model.MatchInfoMapper;
+import oit.is.z3488.kaizi.janken.service.AsyncKekka;
 
 @Controller
 public class JankenController {
@@ -34,6 +37,9 @@ public class JankenController {
 
   @Autowired
   MatchInfoMapper matchInfoMapper;
+
+  @Autowired
+  AsyncKekka asyncKekka;
 
   @GetMapping("/janken")
   public String jankenGet(@RequestParam(required = false) String hand, ModelMap model, Principal prin) {
@@ -124,5 +130,17 @@ public class JankenController {
 
     model.addAttribute("loginUser", loginUser);
     return "wait.html";
+  }
+
+  @GetMapping("/result")
+  public SseEmitter result(Principal prin) {
+    final SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
+    User me = userMapper.selectByName(prin.getName());
+    try {
+      this.asyncKekka.pushResult(emitter, me.getId());
+    } catch (IOException e) {
+      emitter.complete();
+    }
+    return emitter;
   }
 }
