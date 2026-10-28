@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -93,16 +94,33 @@ public class JankenController {
   }
 
   @GetMapping("/wait")
+  @Transactional
   public String waitPage(@RequestParam Integer id, @RequestParam String hand, ModelMap model, Principal prin) {
     String loginUser = prin.getName();
     User me = userMapper.selectByName(loginUser);
 
-    MatchInfo info = new MatchInfo();
-    info.setUser1(me.getId());
-    info.setUser2(id);
-    info.setUser1Hand(hand);
-    info.setActive(true);
-    matchInfoMapper.insertMatchInfo(info);
+    // 自分を対戦相手として待機している(isActive=TRUE)レコードを探す
+    MatchInfo waiting = matchInfoMapper.selectActiveByUser2(me.getId());
+
+    if (waiting == null) {
+      // 先手: matchinfoに登録して待機
+      MatchInfo info = new MatchInfo();
+      info.setUser1(me.getId());
+      info.setUser2(id);
+      info.setUser1Hand(hand);
+      info.setActive(true);
+      matchInfoMapper.insertMatchInfo(info);
+    } else {
+      // 後手: 試合成立。matchesに保存し、matchinfoを非アクティブにする
+      Match match = new Match();
+      match.setUser1(waiting.getUser1());
+      match.setUser2(me.getId());
+      match.setUser1Hand(waiting.getUser1Hand());
+      match.setUser2Hand(hand);
+      match.setActive(true);
+      matchMapper.insertMatch(match);
+      matchInfoMapper.updateDeactivate(waiting.getId());
+    }
 
     model.addAttribute("loginUser", loginUser);
     return "wait.html";
